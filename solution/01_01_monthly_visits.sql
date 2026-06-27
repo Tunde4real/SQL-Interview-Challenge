@@ -1,13 +1,17 @@
 -- Use the following command to run on terminal
--- duckdb {db_name}.duckdb -c ".read solution/01_01/01_01_monthly_visits.sql"  
+-- duckdb {db_name}.duckdb -c ".read solution/01_01_monthly_visits.sql"  
+
 
 -- First Solution
+-- Uses a subquery to find the sum of visits array in each row, ensuring the sum is calculated in-place.
 SELECT
     local_date,
     fk_places,
     (
         WITH visits_unnested AS (
             SELECT UNNEST(visits) AS unnested
+            -- UNNEST function turns an array like this [1,2,3] to rows of individual elements. This is required 
+            -- if an aggregate function like SUM is to be used, as aggregate functions do not work on arrays in sql.
         )
         SELECT SUM(unnested) FROM visits_unnested
     ) AS monthly_visits
@@ -25,6 +29,18 @@ WITH unnested AS (
         local_date,
         fk_places,
         UNNEST(visits) AS unnested_visits
+        /* Using UNNEST(array) will colaspe the array element, creating one row for each element, and duplicating
+            selected values for it. For instance:
+            SELECT 'A', 'B', UNNEST([1,2,3]);  ==>
+            ┌─────────┬─────────┬──────────────────────────────────┐
+            │   'A'   │   'B'   │ unnest(main.list_value(1, 2, 3)) │
+            │ varchar │ varchar │              int32               │
+            ├─────────┼─────────┼──────────────────────────────────┤
+            │ A       │ B       │                                1 │
+            │ A       │ B       │                                2 │
+            │ A       │ B       │                                3 │
+            └─────────┴─────────┴──────────────────────────────────┘
+        */
     FROM
         visits
 )
@@ -40,7 +56,7 @@ ORDER BY
 
 
 /*
-                    OUTPUT : With the two script ran together
+                    OUTPUT
 
 First Script:
 ┌────────────┬──────────────────────────────────────┬────────────────┐
