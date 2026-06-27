@@ -6,13 +6,13 @@ This challenge is designed to test SQL skills for data transformation and analys
 ## 📂 Repository Structure
 ```text
 challenge/
-├── data/       # contains csv files of dummy data
-├── ERD.png     # Schema diagram
-├── README.md   # Readme file for challenge
+├── data/           # contains csv files of dummy data
+├── ERD.png         # Schema diagram
+├── README.md       # Readme file for challenge
 
 solution/
-├── 00_prep.sql      # Data preparation - tables creation with schema implementation
-├── ...       # The rest are files containing solutions numbered to the respective problems given in the challenge.
+├── 00_prep.sql     # Data preparation - tables creation with schema implementation
+├── ...             # The rest are files containing solutions numbered to the respective problems given in the challenge.
 
 README.md       # You're here
 ```
