@@ -75,7 +75,7 @@ WITH unnested AS (
             UNNEST(RANGE(1, LENGTH(visits) + 1))        -- to get day in month
         )::DATE AS full_date
     FROM visits
-    -- We know every place contains exactly one entry for each day in a year, hence there can be more than 366 entries for
+    -- We know every place contains exactly one entry for each day in a year, hence there can't be more than 366 entries for
     -- each place
 ),
 weekly_visits AS (
