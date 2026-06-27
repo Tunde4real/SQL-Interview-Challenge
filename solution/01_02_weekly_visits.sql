@@ -1,5 +1,5 @@
 -- Use the following command to run on terminal
--- duckdb {db_name}.duckdb -c ".read solution/01_02/01_02_weekly_visits.sql"  
+-- duckdb {db_name}.duckdb -c ".read solution/01_02_weekly_visits.sql"  
 
 --      FIRST ATTEMPT
 WITH unnested AS (

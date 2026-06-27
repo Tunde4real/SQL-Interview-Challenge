@@ -1,5 +1,5 @@
 -- Use the following command to run on terminal
--- duckdb {db_name}.duckdb -c ".read solution/03/03_sundays_update.sql"  
+-- duckdb {db_name}.duckdb -c ".read solution/03_sundays_update.sql"  
 
 /*
 SELECT strftime('%a', '2024-01-01'::DATE);   -- Mon

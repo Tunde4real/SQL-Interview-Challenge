@@ -1,5 +1,5 @@
 -- Use the following command to run on terminal
--- duckdb {db_name}.duckdb -c ".read solution/02/02_monthly_percentage_change.sql"  
+-- duckdb {db_name}.duckdb -c ".read solution/02_monthly_percentage_change.sql"  
 
 WITH monthly_visits AS (
     SELECT

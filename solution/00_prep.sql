@@ -2,7 +2,7 @@
     duckdb {db_name}.duckdb -c ""
 
     Use the following command to run on terminal ->
-    duckdb {db_name}.duckdb -c ".read solution/00/00_prep.sql"  
+    duckdb {db_name}.duckdb -c ".read solution/00_prep.sql"  
 */
 
 -- Droping tables for idempotency
