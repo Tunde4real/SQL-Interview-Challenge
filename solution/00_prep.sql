@@ -1,5 +1,9 @@
--- Use the following command to run on terminal
--- duckdb {db_name}.duckdb -c ".read solution/00/00_prep.sql"  
+/* After installing duckdb and veryfying it works on the terminal, create the database to use with the command ->
+    duckdb {db_name}.duckdb -c ""
+
+    Use the following command to run on terminal ->
+    duckdb {db_name}.duckdb -c ".read solution/00/00_prep.sql"  
+*/
 
 -- Droping tables for idempotency
 -- Droping must be in order of one with the most dependants (i.e foreign key(s)) to the one with none.
