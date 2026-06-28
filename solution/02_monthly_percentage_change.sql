@@ -1,6 +1,14 @@
 -- Use the following command to run on terminal
 -- duckdb {db_name}.duckdb -c ".read solution/02_monthly_percentage_change.sql"  
 
+
+/* Since we already have a query that calculates monthly visits from the solution to the first problem, we just
+pull it, and filter for fk_places where fk_city is 2.
+
+Then we calculate percentage change with LAG window function. LAG loops through rows, fetching the previous
+value of a column provided in the LAG function, in respect to the current row. So with LAG, we can fetch the 
+previous value needed to calculate the percentage change.
+*/
 WITH monthly_visits AS (
     SELECT
         v.local_date,
