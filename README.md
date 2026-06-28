@@ -27,4 +27,4 @@ This challenge touches on:
 ## 🛠️ Setup
 I used VS-Code, and duckdb for it's ease in integration with VS-Code. Since it's an embedded, lightweight database, it allows running SQL code in the terminal, without connecting to external services like docker, or a separate database server.
 
-You can install duckdb by following instructions on the [official MotherDuck install page](https://motherduck.com/docs/getting-started/interfaces/connect-query-from-duckdb-cli/).
+You can install duckdb by following instructions on the [official DuckDB install page](https://duckdb.org/install/?platform=macos&environment=cli).
