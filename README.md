@@ -1,6 +1,6 @@
 # SQL Interview Challenge
 
-This challenge is designed to test SQL skills for data transformation and analysis. It models an environment with heavy SQL workloads, where only SQL is allowed for data transformation, and not python for instance, as well as data analysis, using dummy versions of real world data.
+This challenge is designed to test SQL skills for data transformation and analysis. It models an environment with heavy SQL workloads, where SQL is used for data transformation, and not python for instance, as well as data analysis, using dummy versions of real world data.
 
 
 ## 📂 Repository Structure
