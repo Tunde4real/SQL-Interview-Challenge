@@ -1,17 +1,29 @@
 -- Use the following command to run on terminal
 -- duckdb {db_name}.duckdb -c ".read solution/01_02_weekly_visits.sql"  
 
---      FIRST ATTEMPT
+
+/*            FIRST ATTEMPT
+The idea here is to:
+1. Unnest the array to produce rows of daily visits, giving rows for all 366 days in a year, for each daily visits.
+    The rows of daily visits at this point, are in order for each fk_place, in each month.
+2. Assign row number to each daily visit to produce day_in_year value, from 1 - 366
+3. Assign week number based on year number
+4. Sum daily visits based on week number. That is sum daily visit for all rows with week number 1, for fk_places,
+    then for week 2, and like that.
+5. Summing weekly visit for each brand. Recall a brand consists of many fk_places.
+
+This solution however, cannot guarantee columns will remain properly ordered, which lead to the second attempt.
+*/
 WITH unnested AS (
     SELECT
         local_date,
         fk_places,
-        UNNEST(visits) AS unnested_visits,
-        DENSE_RANK() OVER(      -- Dense rank somehow keeps the ordering of the UNNEST function
-            ORDER BY
-                fk_places,
-                local_date
-        )   AS dense_rank
+        UNNEST(visits) AS daily_visit,
+        -- DENSE_RANK() OVER(      -- Using dense rank in an attempt to keep the rows in order
+        --     ORDER BY
+        --         fk_places,
+        --         local_date
+        -- )   AS dense_rank
     FROM
         visits
 ),
@@ -19,7 +31,7 @@ y_unnested AS (
     SELECT
         local_date,
         fk_places,
-        unnested_visits,
+        daily_visit,
         ROW_NUMBER() OVER (PARTITION BY fk_places)
         AS day_in_year
     FROM unnested
@@ -29,18 +41,18 @@ w_unnested AS (
     SELECT
         local_date,
         fk_places,
-        unnested_visits,
+        daily_visit,
         CASE            -- Assign week number 1, 2, 3, ...
             WHEN day_in_year < 7 THEN 1
             WHEN day_in_year % 7 = 0 THEN (day_in_year + 1) // 7
             ELSE (day_in_year // 7) + 1
         END AS week_num
     FROM y_unnested
-), final AS (
+), weekly_sum AS (
     SELECT
         fk_places,
         week_num,
-        SUM(unnested_visits) AS weekly_visits
+        SUM(daily_visit) AS weekly_visits
     FROM w_unnested
     GROUP BY
         week_num,
@@ -51,20 +63,26 @@ w_unnested AS (
 )
 SELECT
     p.fk_brands,
-    f.week_num,
+    ws.week_num,
     SUM(weekly_visits)
-FROM final f
+FROM weekly_sum ws
 JOIN places p ON
-    f.fk_places = p.pid
+    ws.fk_places = p.pid
 GROUP BY
     p.fk_brands,
-    f.week_num
-ORDER BY f.week_num, p.fk_brands;
+    ws.week_num
+ORDER BY ws.week_num, p.fk_brands;
 
 
 
 
---          SECOND ATTEMPT
+/*                  SECOND ATTEMPT
+The idea here is to calculate full date of each daily visit, and attach the full date with the row, so further 
+operations can be based on the full date, ensuring order is kept, by:
+1. Unnesting and assigning full date to each daily visit.
+2. Extracting week num from full date, and summing weekly visits based on that.
+3. Summing weekly visit for each brand. Recall a brand consists of many fk_places.
+*/
 WITH unnested AS (
     SELECT
         local_date,
@@ -82,9 +100,8 @@ weekly_visits AS (
     SELECT 
         fk_places,
         CASE 
-            WHEN EXTRACT(MONTH FROM full_date) = 12 AND 
-                EXTRACT(WEEK FROM full_date) = 1
-                THEN 53
+            WHEN EXTRACT(MONTH FROM full_date) = 12 AND EXTRACT(WEEK FROM full_date) = 1
+                THEN 53                         -- Adds week 53
             ELSE EXTRACT(WEEK FROM full_date) 
         END AS week_num,
         SUM(dayly_visits) AS weekly_visits

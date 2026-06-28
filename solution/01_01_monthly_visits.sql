@@ -22,6 +22,7 @@ ORDER BY
     fk_places;
 
 
+
 --      Another Solution
 --  This is less preferred as it assumes SQL will keep the visits in order from day 1 - 366 of the year
 WITH unnested AS (
@@ -53,6 +54,8 @@ GROUP BY local_date, fk_places
 ORDER BY
     local_date,
     fk_places;
+
+
 
 
 /*
