@@ -1,17 +1,13 @@
 -- Use the following command to run on terminal
--- duckdb {db_name}.duckdb -c ".read solution/03_sundays_update.sql"  
+-- duckdb {db_name}.duckdb -c ".read solution/03_sundays_update.sql"
 
-/*
-SELECT strftime('%a', '2024-01-01'::DATE);   -- Mon
-SELECT dayname('2024-01-01'::DATE);     -- Monday
 
-Database	    Function	            Example
-SQLite	        strftime()	        strftime('%Y-%m-%d', date_col)
-PostgreSQL	    TO_CHAR()	        TO_CHAR(date_col, 'YYYY-MM-DD')
-MySQL	        DATE_FORMAT()	    DATE_FORMAT(date_col, '%Y-%m-%d')
-SQL Server	    FORMAT()	        FORMAT(date_col, 'yyyy-MM-dd')
+/*          FIRST ATTEMPT
+The idea here is to 
+1. Colapse the visits table into daily visits, with full dates attached.
+2. Find visits of days, from the full dates, which are sundays, and of the brand 'Sansom', then set to 0.
+3. Compact the data back to have monthly visits in an array.
 */
-
 
 WITH unnested AS (
     SELECT
@@ -24,7 +20,6 @@ WITH unnested AS (
         )::DATE AS full_date
     FROM visits
 ), updated_visits AS (
-    -- First, I wrote the query without the JOINS
     SELECT
         u.local_date,
         u.fk_places,
@@ -52,13 +47,17 @@ ORDER BY local_date, fk_places;
 
 
 
---          SECOND ATTEMPT
---  This solution escapes using a GROUP BY, edits visits array in-place.
+/*              SECOND ATTEMPT
+This solution escapes using a GROUP BY, and edits visits array in-place.
+
+The idea is to use a subquery to unnest the array, deduce it's full date, find those of Sundays belonging to 
+brand 'Sansom', then set to 0.
+*/
 SELECT 
     v.local_date,
     v.fk_places,
     (
-        WITH unnested AS (
+        WITH unnested_visits AS (
             SELECT UNNEST(visits) AS daily_visits,
                 ( 
                     EXTRACT(YEAR FROM local_date) || '-' ||
@@ -71,7 +70,7 @@ SELECT
                     WHEN strftime('%a', full_date) = 'Sun' AND b.name = 'Sansom' THEN 0
                     ELSE daily_visits
                 END AS updated_daily_visits
-            FROM unnested
+            FROM unnested_visits
         ) SELECT LIST(updated_daily_visits)
             FROM updated_visits
     )   AS new_visits
